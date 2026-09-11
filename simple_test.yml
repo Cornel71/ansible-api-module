@@ -10,7 +10,7 @@
         endpoint: "/users/"
         method: GET
         username: "admin"
-        password: '2G>P>6r*Pk]j_6m'
+        password: '{{ whatever_password }}'
         validate_certs: false
       register: api_response
 
