@@ -3,7 +3,7 @@
   gather_facts: false
   vars:
     awx_admin: "admin"
-    awx_password: '2G>P>6r*Pk]j_6m'
+    awx_password: ''
 
     users_to_add:
       - username: "john_doe"

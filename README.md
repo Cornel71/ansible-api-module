@@ -4,10 +4,6 @@
 
 ---
 
-## 🏗️ Core Architecture Flow
-
-The internal engine handles authentication generation, active endpoint pre-checks, schema maps, and fallback loops completely out of the box:
-
 ![Ansible Custom Module Execution Flow Context](image.png)
 
 ---
@@ -30,8 +26,8 @@ To expose the module natively inside your playbook scopes, structure your local 
 ```text
 .
 ├── library/
-│   └── my_api.py      <-- Place the custom python file here
-└── playbook.yml       <-- Your orchestration playbook targets
+│   └── my_api.py
+└── playbook.yml
 ```
 
 ---
@@ -40,7 +36,7 @@ To expose the module natively inside your playbook scopes, structure your local 
 
 | Input Option | Type | Default Value | Functional Scope |
 | :--- | :--- | :--- | :--- |
-| **`base_url`** | `str` | *Required* | The root target server URL (e.g., `https://awx.companyx.ro`). |
+| **`base_url`** | `str` | *Required* | The root target server URL (e.g., `https://awx.alienware.loc`). |
 | **`api_version`** | `str` | `"api/v2"` | Path context prefix inserted automatically. Set to `""` if the target path is absolute. |
 | **`endpoint`** | `str` | *Required* | Path specific mapping (e.g., `/users/` or dynamic variables like `{{ user.related.teams }}`). |
 | **`method`** | `str` | `"GET"` | Choice parameters restricted to: `GET`, `POST`, `PATCH`, `DELETE`. |
@@ -62,7 +58,7 @@ To expose the module natively inside your playbook scopes, structure your local 
 ```yaml
 - name: Provision Multiple Team Members Natively
   my_api:
-    base_url: "https://awx.companyx.ro"
+    base_url: "https://awx.alienware.loc"
     endpoint: "/users/"
     method: POST
     username: "admin_orchestrator"
@@ -76,8 +72,8 @@ To expose the module natively inside your playbook scopes, structure your local 
       email: "{{ item.email }}"
       is_superuser: false
   loop:
-    - { username: "m_badea", first_name: "Mihai", last_name: "Badea", email: "mihai@companyx.ro" }
-    - { username: "j_doe", first_name: "John", last_name: "Doe", email: "john@companyx.ro" }
+    - { username: "m_badea", first_name: "Mihai", last_name: "Badea", email: "mihai@alienware.loc" }
+    - { username: "j_doe", first_name: "John", last_name: "Doe", email: "john@alienware.loc" }
 ```
 
 ### 2. Follow Hypermedia Relaunch Tokens (GET + Auto Pagination)
@@ -85,7 +81,7 @@ To expose the module natively inside your playbook scopes, structure your local 
 ```yaml
 - name: Collect All Relational Group Profiles Safely
   my_api:
-    base_url: "https://awx.companyx.ro"
+    base_url: "https://awx.alienware.loc"
     api_version: "" # Cleared out because endpoint uses absolute paths
     endpoint: "{{ active_user_profile.json.related.organizations }}"
     method: GET
@@ -100,7 +96,7 @@ To expose the module natively inside your playbook scopes, structure your local 
 ```yaml
 - name: Terminate Stale API Asset
   my_api:
-    base_url: "https://awx.companyx.ro"
+    base_url: "https://awx.alienware.loc"
     endpoint: "/users/87/"
     method: DELETE
     token: "AbX4578291045aBdE"

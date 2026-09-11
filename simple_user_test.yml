@@ -10,7 +10,7 @@
         endpoint: "/users/"
         method: POST
         username: "admin"
-        password: '2G>P>6r*Pk]j_6m'
+        password: ''
         validate_certs: false
         data:
           username: "mihai_test"
