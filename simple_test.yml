@@ -1,0 +1,19 @@
+---
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: "check users"
+      my_api:
+        base_url: "https://tower.alienware.loc/"
+        api_version: "api/v2"
+        endpoint: "/users/"
+        method: GET
+        username: "admin"
+        password: '2G>P>6r*Pk]j_6m'
+        validate_certs: false
+      register: api_response
+
+    - name: display api response
+      debug:
+        var: api_response.json

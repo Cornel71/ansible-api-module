@@ -1,0 +1,32 @@
+---
+- hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: "create new user"
+      my_api:
+        base_url: "https://tower.alienware.loc/"
+        api_version: "api/v2"
+        endpoint: "/users/"
+        method: POST
+        username: "admin"
+        password: '2G>P>6r*Pk]j_6m'
+        validate_certs: false
+        data:
+          username: "mihai_test"
+          password: "PasswordDemo123!"
+          first_name: "Mihai"
+          last_name: "Test"
+          email: "mihai.test@alienware.loc"
+          is_superuser: false
+          is_system_auditor: false
+      register: create_response
+
+    - name: display user creation response
+      debug:
+        msg: >
+          User created!
+          ID: {{ create_response.json.id }}
+          Username: {{ create_response.json.username }}
+          Status HTTP: {{ create_response.status }}
+

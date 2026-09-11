@@ -1,0 +1,76 @@
+---
+- name: Manage AWX API Resources using Custom Module
+  hosts: localhost
+  gather_facts: false
+  vars:
+    base_api_url: "https://companyx.ro"
+    auth_token: "your_awx_token_here"
+
+  tasks:
+    # -------------------------------------------------------------------------
+    # EXAMPLE 1: Structural Tree Dump
+    # -------------------------------------------------------------------------
+    - name: "DUMP - Inspect the complete JSON schema (handles related and summary_fields)"
+      my_api:
+        base_url: "{{ base_api_url }}"
+        api_version: "api/v2"
+        endpoint: "/users/1/"
+        method: GET
+        token: "{{ auth_token }}"
+        dump_structure: true       # Activates data-type mapping mode
+        validate_certs: false
+      register: structure_result
+
+    - name: Output the mapped tree structure
+      debug:
+        var: structure_result.api_structure
+
+
+    # -------------------------------------------------------------------------
+    # EXAMPLE 2: Extracting paths from 'related' node + Auto-Pagination
+    # -------------------------------------------------------------------------
+    - name: "GET - Initial fetch to read relational endpoints"
+      my_api:
+        base_url: "{{ base_api_url }}"
+        endpoint: "/users/1/"
+        token: "{{ auth_token }}"
+        validate_certs: false
+      register: user_data
+
+    - name: "GET - Fetch all organizations using the dynamic path inside 'related'"
+      my_api:
+        base_url: "{{ base_api_url }}"
+        api_version: ""  # Kept empty because the extracted path already includes '/api/v2/...'
+        endpoint: "{{ user_data.json.related.organizations }}"
+        method: GET
+        token: "{{ auth_token }}"
+        auto_pagination: true  # Loops through page 1, 2, 3... and aggregates the lists
+        validate_certs: false
+      register: all_organizations
+
+    - name: Print the number of retrieved items
+      debug:
+        msg: "The user belongs to {{ all_organizations.json | length }} organizations in total."
+
+
+    # -------------------------------------------------------------------------
+    # EXAMPLE 3: Modify field (PATCH) with implicit JSON and Retry policy
+    # -------------------------------------------------------------------------
+    - name: "PATCH - Update user fields with safety rules for transient errors"
+      my_api:
+        base_url: "{{ base_api_url }}"
+        endpoint: "/users/1/"
+        method: PATCH
+        token: "{{ auth_token }}"
+        data:
+          first_name: "Cornel-Mihai"
+          email: "cornel.badea@companyx.ro"
+          is_superuser: true
+        max_retries: 4     # Retries up to 4 times if hitting HTTP 429 or 503
+        retry_delay: 10    # Waits 10 seconds between attempts
+        validate_certs: false
+      register: update_result
+
+    - name: Confirm the updated state
+      debug:
+        msg: "Resource updated. Current email is: {{ update_result.json.email }}"
